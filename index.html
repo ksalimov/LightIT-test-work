@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/css/materialize.min.css"
+          media="screen,projection">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="app.css">
+</head>
+<body ng-app="mainApp" ng-controller="mainAppCtrl">
+    <div ng-switch on="mode.view">
+        <div ng-switch-when="main">
+            <div class="row">
+                <div ng-switch on="mode.registeredView">
+
+                    <!--View for not registered user-->
+                    <div ng-switch-when="false">
+                        <div class="col l4 m12 s12 margin-right-15">
+                            <button class="waves-effect waves-light btn grey" ng-click="signIn()">Sign In</button>
+                            <button class="waves-effect waves-light btn grey" ng-click="signUp()">Sign Up</button>
+                        </div>
+                    </div>
+
+                    <!--View for registered user-->
+                    <div ng-cloak ng-switch-when="true">
+                        <div class="col m12 s12 hide-on-large-only">
+
+                            <!--Information message appears when user successfully registered-->
+                            <p ng-show="mode.successMessageRegistration"
+                               class="green lighten-4 green-text text-darken-4 message center-align"
+                               style="margin-top: 0px">
+                                {{userDetails.username}}, you were successfully registered to ProdNet
+                            </p>
+                        </div>
+                        <div class="col l4 m12 s12 margin-right-15">
+                            <i class="material-icons">person</i>
+                            <button class="waves-effect waves-light btn grey" ng-click="signOut()">Sign Out</button>
+                        </div>
+                        <div class="col l4 hide-on-med-and-down">
+                            <p ng-show="mode.successMessageRegistration"
+                                    class="green lighten-4 green-text text-darken-4 message center-align"
+                                    style="margin-top: 0px">
+                                {{userDetails.username}}, you were successfully registered to ProdNet
+                            </p>
+                        </div>
+                    </div>
+
+                    <!--Arrow back icon for backing to home view-->
+                    <div ng-cloak class="col l4 hide-on-med-and-down center-align" ng-show="mode.backArrow">
+                        <a class="material-icons browser-default" ng-click="backToMainView()">arrow_back</a>
+                    </div>
+
+                    <div ng-cloak class="col m12 s12 hide-on-large-only center-align margin-top-25" ng-show="mode.backArrow">
+                        <a class="material-icons browser-default" ng-click="backToMainView()">arrow_back</a>
+                    </div>
+                </div>
+            </div>
+
+            <!--Products representation-->
+            <div class="row">
+                <div ng-switch on="mode.mainSubViews">
+
+                    <!--Products on home view-->
+                    <div ng-switch-when="all">
+                        <div id="productsContainer">
+                            <div class="col l6 m12 s12" ng-repeat="item in products.data">
+                                <div class="image-borders">
+                                    <div class="center-align">
+                                        <h5 ng-cloak ng-click="showProductInfo(item)">{{item.title}}</h5>
+                                        <div>
+                                            <img src="#" alt="{{products.data[0].img}}" ng-click="showProductInfo(item)">
+                                        </div>
+                                    </div>
+                                    <p ng-cloak ng-click="showProductInfo(item)">{{item.text}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Product information view when some product is picked-->
+                    <div ng-cloak ng-switch-when="one">
+                        <div id="productContainer">
+                            <div class="col l7 m12 s12">
+                                <h5>{{selectedProduct.product.title}}</h5>
+                                <div>
+                                    <img src="#" alt="{{selectedProduct.product.img}}">
+                                    <p>{{selectedProduct.product.text}}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--Reviews container-->
+                        <div class="col l5 m12 s12">
+                            <div id="reviewsContainer">
+                                <h5 style="display: inline-block">Reviews
+                                    <span ng-cloak style="color: #bdbdbd">{{reviews.data.length}}</span>
+                                </h5>
+                                <button class="waves-effect waves-light btn grey"
+                                        ng-class="mode.selectedClass"
+                                        ng-click="writeReview()" style="float: right">
+                                    Write review
+                                </button>
+
+                                <!--Review message container-->
+                                <div id="messageContainer" ng-show="mode.reviewMessage">
+                                    <form name="reviewForm" novalidate ng-submit="submitReview(reviewDetails, reviewForm.$valid)">
+                                        <textarea id="reviewText" name="reviewText" required
+                                                  ng-model="reviewDetails.text" type="text"></textarea>
+                                        <div ng-cloak class="deep-orange-text text-accent-4" ng-show="showError">
+                                            {{getError(reviewForm.reviewText.$error)}}
+                                        </div>
+
+                                        <!--Review stars-->
+                                        <div id="reviewRate" ng-repeat="item in [0,1,2,3,4]">
+                                            <div class="ratesContainer">
+                                                <i id="ratingStar{{$index}}" class="material-icons"
+                                                   ng-click="setRate(item)"
+                                                   ng-mouseover="onMouseOverIcon(item)"
+                                                   ng-mouseleave="onMouseLeaveIcon()">star_border</i>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div id="btnReviewContainer" class="col l7 offset-l5 right-align">
+
+                                                <!--Submit review button sends reviews to server-->
+                                                <button class="waves-effect waves-light btn
+                                                    brown lighten-4 grey-text text-darken-3">
+                                                    Submit review
+                                                    <i class="material-icons right">send</i>
+                                                </button>
+
+                                                <!--Cancel button-->
+                                                <button class="waves-effect waves-light btn brown"
+                                                        ng-click="cancelReview()">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <!--Success information message-->
+                                <p ng-show="mode.successMessageReview" class="green lighten-4 green-text text-darken-4 message">
+                                    {{successMessage.review}}
+                                </p>
+
+                                <!--Error information message-->
+                                <p ng-show="mode.errorMessageReview" class="red lighten-4 red-text text-darken-4 message">
+                                    {{errorMessage.review}}
+                                </p>
+
+                                <!--List of reviews-->
+                                <div ng-repeat="item in reviews.data | orderBy: '-created_at'">
+                                    <div>
+                                        <table class="browser-default">
+                                            <tbody>
+                                                <tr>
+                                                    <td ng-cloak class="username-text">{{item.created_by.username}}</td>
+                                                    <td ng-cloak class="review-date">{{transformDate(item.created_at)}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <p>{{item.text}}</p>
+                                    <i class="material-icons">star_rate</i>
+                                    <i>{{item.rate}}</i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Sign in view-->
+        <div ng-cloak class="row" ng-switch-when="signIn">
+            <div class="row">
+                <ng-include src="signInUrl" ng-controller="signInCtrl"/>
+            </div>
+        </div>
+
+        <!--Sign up view-->
+        <div ng-cloak class="row" ng-switch-when="signUp">
+            <div class="row">
+                <ng-include src="signUpUrl" ng-controller="signUpCtrl"/>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js" integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.6/js/materialize.min.js"></script>
+
+    <script src="app.js"></script>
+    <script src="signIn/signInCtrl.js"></script>
+    <script src="signUp/signUpCtrl.js"></script>
+</body>
+</html>

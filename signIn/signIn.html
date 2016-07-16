@@ -1,0 +1,44 @@
+<form name="signInForm" novalidate ng-submit="signInUser(userDetails, signInForm.$valid)">
+    <p class="center-align">
+        <a class="material-icons browser-default" ng-click="backToMainView()">arrow_back</a>
+    </p>
+    <div class="col l12 m12 s12 center-align">
+        <h5>Sign in to ProdNet</h5>
+    </div>
+
+    <div class="col l4 m12 s12 offset-l4">
+
+        <!--Username field with validation-->
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input id="username" name="username" type="text" class="form-control"
+                   required ng-model="userDetails.username">
+            <div class="deep-orange-text text-accent-4" ng-show="showError">
+                {{getError(signInForm.username.$error)}}
+            </div>
+        </div>
+
+        <!--Password field with validation-->
+        <div class="form-group margin-top-25">
+            <label for="userPassword">Password:</label>
+            <input id="userPassword" name="userPassword" type="password" class="form-control"
+                   required ng-model="userDetails.password">
+            <div class="deep-orange-text text-accent-4" ng-show="showError">
+                {{getError(signInForm.userPassword.$error)}}
+            </div>
+        </div>
+
+        <!--Error information message-->
+        <p ng-show="mode.errorMessageAuthorization" class="red lighten-4 red-text text-darken-4 message">
+            {{errorMessage.authorization}}
+        </p>
+
+        <!--Submit button sends data to server-->
+        <div class="center-align margin-top-25">
+            <button class="btn waves-effect waves-light" type="submit">Sign In
+                <i class="material-icons right">send</i>
+            </button>
+        </div>
+
+    </div>
+</form>

@@ -1,0 +1,53 @@
+<form name="registrationForm" novalidate ng-submit="registerUser(userDetails, registrationForm.$valid)">
+
+    <p class="center-align">
+        <a class="material-icons browser-default" ng-click="backToMainView()">arrow_back</a>
+    </p>
+    <div class="col l12 m12 s12 center-align">
+        <h5>Join ProdNet</h5>
+    </div>
+    <div class="col l4 m12 s12 offset-l4">
+
+        <!--Username field with validation-->
+        <div class="form-group">
+            <label for="newUsername">Username:</label>
+            <input id="newUsername" class="form-control" type="text" name="newUsername"
+                   required ng-model="userDetails.username">
+            <div class="deep-orange-text text-accent-4" ng-show="showError">
+                {{getError(registrationForm.newUsername.$error)}}
+            </div>
+        </div>
+
+        <!--Password field with validation-->
+        <div class="form-group margin-top-25">
+            <label for="newUserPassword">Password:</label>
+            <input id="newUserPassword" class="form-control" type="password" name="newUserPassword"
+                   required ng-model="userDetails.password">
+            <div class="deep-orange-text text-accent-4" ng-show="showError">
+                {{getError(registrationForm.newUserPassword.$error)}}
+            </div>
+        </div>
+
+        <!--Password matching checkup field with validation-->
+        <div class="form-group margin-top-25">
+            <label for="newUserPasswordConfirm">Password (again):</label>
+            <input id="newUserPasswordConfirm" class="form-control" type="password" name="newUserPasswordConfirm"
+                   required ng-model="newUserPasswordConfirm" passwords-match="newUserPassword">
+            <div class="deep-orange-text text-accent-4" ng-show="showError">
+                {{getError(registrationForm.newUserPasswordConfirm.$error)}}
+            </div>
+        </div>
+
+        <!--Error information message-->
+        <p ng-show="mode.errorMessageRegistration" class="red lighten-4 red-text text-darken-4 message">
+            {{errorMessage.registration}}
+        </p>
+
+        <!--Submit button. Sends data to server-->
+        <div class="center-align margin-top-25">
+            <button class="btn waves-effect waves-light" type="submit">Sign Up
+                <i class="material-icons right">send</i>
+            </button>
+        </div>
+    </div>
+</form>
