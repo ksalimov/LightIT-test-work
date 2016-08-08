@@ -1,5 +1,4 @@
-# LightIT-test-work
-Test work for Front end position
+# AngularJS simple app
 
 This is AngularJS application. Because it uses ng-include directives for “SIGN IN” and “SIGN UP” views it should be run on web server (local or remote) or, if it's possible, configure browser to allow local files access.
 
